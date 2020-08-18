@@ -37,7 +37,8 @@ else
     sed -i "s/mysql_user/${mysql_user}/g" application.yml
     sed -i "s/mysql_pwd/${mysql_pwd}/g" application.yml
 fi
-## Maven 编译
+## Maven 编译,提前将项目依赖的包先编译完成安装到本地仓库
+## 后面web都打包时不用去远程仓库拉取，速度会比较快
 cd $PROJ_PATH/root
 mvn clean install -Dmaven.test.skip=true
 
