@@ -44,6 +44,8 @@ pipeline {
         stage('Maven 编译'){
             steps {
                 sh '''
+                    . ~/.bash_profile
+                    
                     cd ${WORKSPACE}/root
                     mvn clean install -Dmaven.test.skip=true
                     
@@ -57,19 +59,28 @@ pipeline {
             steps {
                 script{
                     try{
-                        sh 'docker stop $docker_container_name'
+                        sh '''
+                            . ~/.bash_profile
+                            docker stop $docker_container_name
+                        '''
                     }catch(exc){
                         echo 'The container $docker_container_name does not exist'
                     }
 
                     try{
-                        sh 'docker rm $docker_container_name'
+                        sh '''
+                            . ~/.bash_profile
+                            docker rm $docker_container_name
+                        '''
                     }catch(exc){
                         echo 'The container $docker_container_name does not exist'
                     }
 
                     try{
-                        sh 'docker rmi $docker_image_name'
+                        sh '''
+                           . ~/.bash_profile
+                           docker rmi $docker_image_name
+                        '''
                     }catch(exc){
                         echo 'The docker image $docker_image_name does not exist'
                     }
@@ -80,6 +91,7 @@ pipeline {
         stage('生成新的Docker Image'){
             steps {
                 sh '''
+                    . ~/.bash_profile
                     cd ${WORKSPACE}/web/bin/docker
                     rm -f web.war
                     cp ${WORKSPACE}/web/target/web.war .
@@ -91,6 +103,7 @@ pipeline {
         stage('启动新Docker实例'){
             steps {
                 sh '''
+                    . ~/.bash_profile
                     docker run -d --name $docker_container_name -p 8981:8980 $docker_image_name
                 '''
             }
